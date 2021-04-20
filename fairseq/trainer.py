@@ -381,6 +381,7 @@ class Trainer(object):
         # call state_dict on all ranks in case it needs internal communication
         state_dict = utils.move_to_cpu(self.state_dict())
         state_dict["extra_state"].update(extra_state)
+        logger.info("allo?")
         if self.should_save_checkpoint_on_current_rank:
             logger.info(f"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
             checkpoint_utils.torch_persistent_save(
