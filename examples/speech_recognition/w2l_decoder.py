@@ -159,7 +159,13 @@ class W2lKenLMDecoder(W2lDecoder):
                 word_idx = self.word_dict.get_index(word)
                 print("word_idx", word_idx)
                 input()
-                print("tgt_dict", tgt_dict)
+                print("tgt_dict.__len__", tgt_dict.__len__())
+                input()
+                print("tgt_dict.__getitem__", tgt_dict.__getitem__(0))
+                print("tgt_dict.__getitem__", tgt_dict.__getitem__(1))
+                print("tgt_dict.__getitem__", tgt_dict.__getitem__(2))
+                print("tgt_dict.__getitem__", tgt_dict.__getitem__(3))
+
                 input()
 
                 _, score = self.lm.score(start_state, word_idx)
