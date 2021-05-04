@@ -169,6 +169,9 @@ class W2lKenLMDecoder(W2lDecoder):
 
                 _, score = self.lm.score(start_state, word_idx)
                 for spelling in spellings:
+                    print("token")
+                    for token in spelling:
+                        print(token)
                     spelling_idxs = [tgt_dict.index(token) for token in spelling]
                     print("spelling_idxs", spelling_idxs)
                     print("######")
