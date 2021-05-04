@@ -159,6 +159,9 @@ class W2lKenLMDecoder(W2lDecoder):
                 word_idx = self.word_dict.get_index(word)
                 print("word_idx", word_idx)
                 input()
+                print("tgt_dict", tgt_dict)
+                input()
+
                 _, score = self.lm.score(start_state, word_idx)
                 for spelling in spellings:
                     spelling_idxs = [tgt_dict.index(token) for token in spelling]
