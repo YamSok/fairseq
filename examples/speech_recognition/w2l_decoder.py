@@ -154,10 +154,20 @@ class W2lKenLMDecoder(W2lDecoder):
 
             start_state = self.lm.start(False)
             for i, (word, spellings) in enumerate(self.lexicon.items()):
+                print("word", word)
+                input()
                 word_idx = self.word_dict.get_index(word)
+                print("word_idx", word_idx)
+                input()
                 _, score = self.lm.score(start_state, word_idx)
                 for spelling in spellings:
                     spelling_idxs = [tgt_dict.index(token) for token in spelling]
+                    print("spelling_idxs", spelling_idxs)
+                    print("######")
+                    input()
+                    print("spelling", spelling)
+                    print("######")
+                
                     assert (
                         tgt_dict.unk() not in spelling_idxs
                     ), f"{spelling} {spelling_idxs}"
