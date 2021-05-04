@@ -409,7 +409,9 @@ class Trainer(object):
         logger.info(f"Preparing to load checkpoint {filename}")
         is_distributed = self.data_parallel_world_size > 1
         bexists = PathManager.isfile(filename)
+        print("###### checkpoint exist ?")
         if bexists:
+            print("## TRUE !!")
             load_on_all_ranks = (
                 self.cfg.checkpoint.load_checkpoint_on_all_dp_ranks
                 # TPUs don't support broadcast yet, so load checkpoints
