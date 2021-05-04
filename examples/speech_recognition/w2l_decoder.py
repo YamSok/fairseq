@@ -161,10 +161,9 @@ class W2lKenLMDecoder(W2lDecoder):
                 input()
                 print("tgt_dict.__len__", tgt_dict.__len__())
                 input()
-                print("tgt_dict.__getitem__", tgt_dict.__getitem__(0))
-                print("tgt_dict.__getitem__", tgt_dict.__getitem__(1))
-                print("tgt_dict.__getitem__", tgt_dict.__getitem__(2))
-                print("tgt_dict.__getitem__", tgt_dict.__getitem__(3))
+                for i in range(tgt_dict.__len__()):
+                    print(tgt_dict.__getitem__(i))
+                
 
                 input()
 
