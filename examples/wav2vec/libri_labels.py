@@ -10,11 +10,12 @@ Helper script to pre-compute embeddings for a flashlight (previously called wav2
 
 import argparse
 import os
-
+import pandas as pd
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("tsv")
+    parser.add_argument("--tracker", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--output-name", required=True)
     args = parser.parse_args()
@@ -23,6 +24,8 @@ def main():
 
     transcriptions = {}
 
+    data = pd.read_csv(args.tracker)
+    
     with open(args.tsv, "r") as tsv, open(
         os.path.join(args.output_dir, args.output_name + ".ltr"), "w"
     ) as ltr_out, open(
@@ -33,15 +36,9 @@ def main():
             line = line.strip()
             dir = os.path.dirname(line)
             if dir not in transcriptions:
-                parts = dir.split(os.path.sep)
-                trans_path = f"{parts[-2]}-{parts[-1]}.trans.txt"
-                path = os.path.join(root, dir, trans_path)
-                assert os.path.exists(path)
                 texts = {}
-                with open(path, "r") as trans_f:
-                    for tline in trans_f:
-                        items = tline.strip().split()
-                        texts[items[0]] = " ".join(items[1:])
+                for index, row in data.iterrows():
+                    texts[row["file"].split(".wav")[0]] = row["transcription"]
                 transcriptions[dir] = texts
             part = os.path.basename(line).split(".")[0]
             assert part in transcriptions[dir]
