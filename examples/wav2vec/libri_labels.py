@@ -31,22 +31,28 @@ def main():
     ) as ltr_out, open(
         os.path.join(args.output_dir, args.output_name + ".wrd"), "w"
     ) as wrd_out:
-        root = next(tsv).strip()
-        for line in tsv:
-            line = line.strip()
-            dir = os.path.dirname(line)
-            if dir not in transcriptions:
-                texts = {}
-                for index, row in data.iterrows():
-                    texts[row["file"].split(".wav")[0]] = row["transcription"]
-                transcriptions[dir] = texts
-            part = os.path.basename(line).split(".")[0]
-            assert part in transcriptions[dir]
-            print(transcriptions[dir][part], file=wrd_out)
-            print(
-                " ".join(list(transcriptions[dir][part].replace(" ", "|"))) + " |",
-                file=ltr_out,
-            )
+        texts = {}
+        for index, row in data.iterrows():
+            texts[row["file"].split(".wav")[0]] = row["transcription"]
+        for x in texts.items():
+            print(x[1].upper(), file=wrd_out)
+            print(" ".join(list(x[1].upper().replace(" ", "|"))) + " |", file=ltr_out)
+        # root = next(tsv).strip()
+        # for line in tsv:
+        #     line = line.strip()
+        #     dir = os.path.dirname(line)
+        #     if dir not in transcriptions:
+        #         texts = {}
+        #         for index, row in data.iterrows():
+        #             texts[row["file"].split(".wav")[0]] = row["transcription"]
+        #         transcriptions[dir] = texts
+        #     part = os.path.basename(line).split(".")[0]
+        #     assert part in transcriptions[dir]
+        #     print(transcriptions[dir][part], file=wrd_out)
+        #     print(
+        #         " ".join(list(transcriptions[dir][part].replace(" ", "|"))) + " |",
+        #         file=ltr_out,
+        #     )
 
 
 if __name__ == "__main__":
