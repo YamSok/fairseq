@@ -22,7 +22,7 @@ def delete_untracked(data, folder):
     files_absolute = glob.glob(folder + "/*.wav")
     files_relative = [f.split("/")[-1] for f in files_absolute]
     count = 0
-    run(f'rm -f {folder}/*GOULARD*', shell=True) # Bug filename avec espace sinon
+    # run(f'rm -f {folder}/*GOULARD*', shell=True) # Bug filename avec espace sinon
     for i in range(len(files_relative)):
         if files_relative[i] not in data["file"].to_list():
             run(f'rm -f {files_absolute[i]}', shell=True)
@@ -70,6 +70,7 @@ def populate(data, label, percent, folder, fairseq):
     print("Copie")
     run("cp -r " + os.path.join(folder, f"WP1 {folder}/WP1_{label}"), shell=True)
     test = gen_train_test(data, percent)
+    print("Nombre de fichiers :", len(test))
     print(f"Save tracker {folder}/WP1_{label}/dataset_FR_{label}.csv")
     test.to_csv(os.path.join(folder, f"WP1_{label}/dataset_FR_{label}.csv"), index=False)    
     print("Delete untracked")
@@ -117,13 +118,16 @@ def main():
     data = pd.read_csv(os.path.join(folder, "dataset_FR_filtered.csv"))
     
     # Fraction calculée par rapport à la taille du dataset de base pour Charline : ~15h
-    populate(data, '5h', 1/3, folder, fairseq)
-    populate(data, '2h', 1/7, folder, fairseq)
-    populate(data, '1h', 1/15, folder, fairseq)
-    populate(data, '30', 1/30, folder, fairseq)
-    populate(data, '15m', 1/60, folder, fairseq)
+    # Maintenant : 50h
+    populate(data, '5h', 1/10, folder, fairseq)
+    populate(data, '2h', 2/50, folder, fairseq)
+    populate(data, '1h', 1/50, folder, fairseq)
+    populate(data, '30m', 1/100, folder, fairseq)
+    populate(data, '15m', 1/200, folder, fairseq)
     
-    populate(data, 'valid', 1/3, folder, fairseq)
+    populate(data, 'valid', 1/10, folder, fairseq)
+    populate(data, 'test', 2/10, folder, fairseq)
+
     
         
 main()
