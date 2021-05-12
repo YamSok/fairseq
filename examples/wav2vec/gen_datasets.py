@@ -16,7 +16,7 @@ def gen_train_test(data, percent):
     test = pd.DataFrame(columns=["file", "transcription"])
     test["file"] = X_test
     test["transcription"] = y_test
-    return train, test
+    return test
 
 def delete_untracked(data, folder):
     files_absolute = glob.glob(folder + "/*.wav")
