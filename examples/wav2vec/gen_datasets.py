@@ -69,7 +69,7 @@ def populate(data, label, percent, folder, fairseq):
     print({label})
     print("Copie")
     run("cp -r " + os.path.join(folder, f"WP1 {folder}/WP1_{label}"), shell=True)
-    train, test = gen_train_test(data, percent)
+    test = gen_train_test(data, percent)
     print(f"Save tracker {folder}/WP1_{label}/dataset_FR_{label}.csv")
     test.to_csv(os.path.join(folder, f"WP1_{label}/dataset_FR_{label}.csv"), index=False)    
     print("Delete untracked")
