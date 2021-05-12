@@ -1,7 +1,7 @@
 import pandas as pd
 import glob 
 from subprocess import run
-
+import os
 
 def delete_untracked(data):
     files_absolute = glob.glob("data/WP1/*.wav")
