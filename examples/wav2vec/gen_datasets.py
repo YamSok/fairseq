@@ -88,7 +88,7 @@ def populate(data, label, percent, folder, fairseq):
 #     run('mv ' os.path.join(folder, f'WP1_{label}/valid.tsv') + ' ' + os.path.join(folder, f'WP1_{label}/dev_other.tsv'), shell=True)
     
     print("train.tsv")
-    run('python ' + os.path.join(fairseq, 'examples/wav2vec/dl4s_labels.py') + ' ' + os.path.join(folder, f'WP1_{label}/train.tsv') +
+    run('python ' + os.path.join(fairseq, 'examples/wav2vec/libri_labels.py') + ' ' + os.path.join(folder, f'WP1_{label}/train.tsv') +
     ' --output-dir ' + os.path.join(folder, f'WP1_{label}') +
     ' --output-name train --tracker ' + os.path.join(folder, f'WP1_{label}/dataset_FR_{label}.csv'), shell=True)
     
