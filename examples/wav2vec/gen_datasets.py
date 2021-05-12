@@ -114,7 +114,7 @@ def main():
     fairseq = args.fairseq
     
     # Import du tracker clean avec juste Charline
-    data = pd.read_csv(folder, "dataset_FR_filtered.csv")
+    data = pd.read_csv(os.path.join(folder, "dataset_FR_filtered.csv"))
     
     # Fraction calculée par rapport à la taille du dataset de base pour Charline : ~15h
     populate(data, '5h', 1/3, folder, fairseq)
