@@ -1,14 +1,13 @@
 import pandas as pd
 import glob 
 from subprocess import run
-import os
-from collections import Counter
 
 
 def delete_untracked(data):
     files_absolute = glob.glob("data/WP1/*.wav")
     files_relative = [f.split("/")[-1] for f in files_absolute]
     count = 0
+    run(f'rm -f data/WP1/*ARNAUD*', shell=True)
     for i in range(len(files_relative)):
         if files_relative[i] not in data["file"].to_list():
             run(f'rm -f {files_absolute[i]}', shell=True)
@@ -56,12 +55,12 @@ def main():
     data = data.dropna()
 
     # Sélection des contributeurs fiables
-    # data = data[data["file"].apply(lambda x : "CLEMENT" in x or "MONTA" in x or "GOULARD" in x)]
-    data = data[data["file"].apply(lambda x : "MONTA" in x)]
+    data = data[data["file"].apply(lambda x : "CLEMENT" in x or "MONTA" in x or "GOULARD" in x)]
+#     data = data[data["file"].apply(lambda x : "MONTA" in x)]
 
 
     # Supprime les noms de fichiers avec espace
-    # data = data.drop(data[data['file'].str.contains("ARN")].index)
+    data = data.drop(data[data['file'].str.contains("ARN")].index)
 
     # On enlève les chevrons qui apparaissent dans les "<euh>"
     transcription = data["transcription"].apply(lambda x : x.replace("<", "").replace(">", ""))
