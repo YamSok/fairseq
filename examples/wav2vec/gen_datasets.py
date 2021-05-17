@@ -45,10 +45,9 @@ def gen_dict(folder):
     Fonction issue dut git de mailong25 (STT vietnamien)
     Generate dict from transcript.txt
     """
-    save_dir = folder
     transcript_file = os.path.join(folder, "transcript.txt")
     
-    dictionary = os.path.join(save_dir, 'dict.ltr.txt')
+    dictionary = os.path.join(folder, 'dict.ltr.txt')
     
     with open(transcript_file) as f:
         data = f.read().splitlines()
@@ -67,6 +66,7 @@ def gen_dict(folder):
 
 def populate(data, label, percent, folder, fairseq):
     print({label})
+    path = os.path.join(folder, f"WP1_{label}")
     print("Copie")
     run("cp -r " + os.path.join(folder, f"WP1 {folder}/WP1_{label}"), shell=True)
     test = gen_train_test(data, percent)
@@ -74,15 +74,15 @@ def populate(data, label, percent, folder, fairseq):
     print(f"Save tracker {folder}/WP1_{label}/dataset_FR_{label}.csv")
     test.to_csv(os.path.join(folder, f"WP1_{label}/dataset_FR_{label}.csv"), index=False)    
     print("Delete untracked")
-    delete_untracked(test, os.path.join(folder, f"WP1_{label}"))
+    delete_untracked(test, path)
     print("gen_trans")
     gen_trans(test, folder)
     print("gen_dict")
-    gen_dict(folder)
+    gen_dict(path)
     print("Manifest")
     run('python ' + 
-        os.path.join(fairseq, "examples/wav2vec/wav2vec_manifest.py") + " " + os.path.join(folder, f"WP1_{label}") +
-        " --dest " + os.path.join(folder, f"WP1_{label}") + 
+        os.path.join(fairseq, "examples/wav2vec/wav2vec_manifest.py") + " " + path +
+        " --dest " + path + 
         " --ext wav --valid-percent 0", shell=True)
     
 #     print("Rename")
