@@ -125,7 +125,9 @@ def main():
     populate(data, '30m', 1/100, folder, fairseq)
     populate(data, '15m', 1/200, folder, fairseq)
     
-    populate(data, 'valid', 1/10, folder, fairseq)
+    populate(data, 'valid_big', 1/10, folder, fairseq)
+    populate(data, 'valid_small', 1/20, folder, fairseq)
+
     populate(data, 'test', 2/10, folder, fairseq)
 
     
