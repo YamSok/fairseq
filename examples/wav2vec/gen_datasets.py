@@ -34,7 +34,7 @@ def gen_trans(data, folder):
     Generate transcript from tracker csv
     Format : filename transcription
     """
-    with open(folder + '/transcript.txt', "w") as trans:
+    with open(os.path.join(folder, 'transcript.txt'), "w") as trans:
         for index, row in data.iterrows():
             texts = row["file"].split(".wav")[0] + " " + row["transcription"]
             print(texts, file=trans)
@@ -76,7 +76,7 @@ def populate(data, label, percent, folder, fairseq):
     print("Delete untracked")
     delete_untracked(test, path)
     print("gen_trans")
-    gen_trans(test, folder)
+    gen_trans(test, path)
     print("gen_dict")
     gen_dict(path)
     print("Manifest")
