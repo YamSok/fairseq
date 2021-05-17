@@ -1,5 +1,5 @@
 source activate p3
-
+touch results/placeholder.png
 while true;
 do
     sleep $2
