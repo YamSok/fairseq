@@ -32,10 +32,12 @@ def update_df(c):
     data = pd.DataFrame.from_dict(data)
     data = data.set_index("epoch")
     
-    valid_data = populate_dict(valid_epoch)
-    valid_data = pd.DataFrame.from_dict(valid_data)
-    valid_data = valid_data.set_index("epoch")
-
+    if valid_epoch:
+        valid_data = populate_dict(valid_epoch)
+        valid_data = pd.DataFrame.from_dict(valid_data)
+        valid_data = valid_data.set_index("epoch")
+    else :
+        valid_data = []
     return valid_data, data
 
 def main():
@@ -55,10 +57,11 @@ def main():
     c = content.split('\n')[258:]
     valid_data, data = update_df(c)
     
-    valid_data.plot(subplots=True, figsize=(20,40))
-    timestamp = d.datetime.now().strftime("%d-%m-%Y(%H:%M:%S)")
-    plt.savefig(os.path.join(out, f"valid_data_{timestamp}.png"))
-    plt.close()
+    if list(valid_data):
+        valid_data.plot(subplots=True, figsize=(20,40))
+        timestamp = d.datetime.now().strftime("%d-%m-%Y(%H:%M:%S)")
+        plt.savefig(os.path.join(out, f"valid_data_{timestamp}.png"))
+        plt.close()
     
     data["train_loss"].plot(subplots=True, figsize=(20,10))
     plt.savefig(os.path.join(out, f"train_loss_{timestamp}.png"))
