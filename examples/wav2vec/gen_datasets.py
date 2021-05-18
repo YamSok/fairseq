@@ -133,16 +133,16 @@ def main():
     
     # Fraction calculée par rapport à la taille du dataset de base pour Charline : ~15h
     # Maintenant : 50h
-    # populate(data, '5h', 1/10, folder, fairseq)
-    # populate(data, '2h', 2/50, folder, fairseq)
-    # populate(data, '1h', 1/50, folder, fairseq)
-    # populate(data, '30m', 1/100, folder, fairseq)
+    populate(data, '5h', 1/10, folder, fairseq)
+    populate(data, '2h', 2/50, folder, fairseq)
+    populate(data, '1h', 1/50, folder, fairseq)
+    populate(data, '30m', 1/100, folder, fairseq)
     populate(data, '15m', 1/200, folder, fairseq)
     
-    # populate(data, 'valid_big', 1/10, folder, fairseq)
-    # populate(data, 'valid_small', 1/20, folder, fairseq)
+    populate(data, 'valid_big', 1/10, folder, fairseq)
+    populate(data, 'valid_small', 1/20, folder, fairseq)
 
-    # populate(data, 'test', 2/10, folder, fairseq)
+    populate(data, 'test', 2/10, folder, fairseq)
 
     
         
