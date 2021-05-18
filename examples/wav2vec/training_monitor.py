@@ -11,7 +11,6 @@ def populate_dict(epoch):
             table = e.split('{')[1][:-1].split(',')
         except:
             print(e)
-            input()
         k = [x.split(":")[0].split('"')[1] for x in table]
         v = [float(table[0].split(":")[1])] + [float(x.split(":")[1].split('"')[1]) for x in table if '"' in x.split(":")[1]]
         d = {k:v for (k,v) in zip(k,v)}
