@@ -60,15 +60,19 @@ def main():
     if list(valid_data):
         valid_data.plot(subplots=True, figsize=(20,40))
         timestamp = d.datetime.now().strftime("%d-%m-%Y(%H:%M:%S)")
-        plt.savefig(os.path.join(out, f"valid_data_{timestamp}.png"))
+        # plt.savefig(os.path.join(out, f"valid_data_{timestamp}.png"))
+        plt.savefig(os.path.join(out, f"valid_data.png"))
+
         plt.close()
     
     data["train_loss"].plot(subplots=True, figsize=(20,10))
-    plt.savefig(os.path.join(out, f"train_loss_{timestamp}.png"))
+    # plt.savefig(os.path.join(out, f"train_loss_{timestamp}.png"))
+    plt.savefig(os.path.join(out, f"train_loss.png"))
     plt.close()
     
     data.plot(subplots=True, figsize=(20,40))    
-    plt.savefig(os.path.join(out, f"train_data_{timestamp}.png"))
+    # plt.savefig(os.path.join(out, f"train_data_{timestamp}.png"))
+    plt.savefig(os.path.join(out, f"train_data.png"))
     plt.close()
     
 if __name__ == "__main__":
