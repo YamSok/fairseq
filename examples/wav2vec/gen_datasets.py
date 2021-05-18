@@ -28,6 +28,17 @@ def delete_untracked(data, folder):
             run(f'rm -f {files_absolute[i]}', shell=True)
             count += 1
     print(count)
+
+def copy_data(data, source, dest):
+    files_absolute = glob.glob(os.path.join(source, "*.wav"))
+    files_relative = [f.split("/")[-1] for f in files_absolute]
+    count = 0
+    # run(f'rm -f {folder}/*GOULARD*', shell=True) # Bug filename avec espace sinon
+    for i in range(len(files_relative)):
+        if files_relative[i] in data["file"].to_list():
+            run(f'cp {files_absolute[i]} {dest}', shell=True)
+            count += 1
+    print(count)
     
 def gen_trans(data, folder):
     """
@@ -68,13 +79,16 @@ def populate(data, label, percent, folder, fairseq):
     print({label})
     path = os.path.join(folder, f"WP1_{label}")
     print("Copie")
-    run("cp -r " + os.path.join(folder, f"WP1 {folder}/WP1_{label}"), shell=True)
+    # run("cp -r " + os.path.join(folder, f"WP1 {folder}/WP1_{label}"), shell=True)
+    run(f"mkdir {folder}/WP1_{label}", shell=True)
+
     test = gen_train_test(data, percent)
     print("Nombre de fichiers :", len(test))
     print(f"Save tracker {folder}/WP1_{label}/dataset_FR_{label}.csv")
     test.to_csv(os.path.join(folder, f"WP1_{label}/dataset_FR_{label}.csv"), index=False)    
     print("Delete untracked")
-    delete_untracked(test, path)
+    # delete_untracked(test, path)
+    copy_data(test, f"{folder}/WP1",f'{folder}/WP1_{label}')
     print("gen_trans")
     gen_trans(test, path)
     print("gen_dict")
@@ -119,16 +133,16 @@ def main():
     
     # Fraction calculée par rapport à la taille du dataset de base pour Charline : ~15h
     # Maintenant : 50h
-    populate(data, '5h', 1/10, folder, fairseq)
-    populate(data, '2h', 2/50, folder, fairseq)
-    populate(data, '1h', 1/50, folder, fairseq)
-    populate(data, '30m', 1/100, folder, fairseq)
+    # populate(data, '5h', 1/10, folder, fairseq)
+    # populate(data, '2h', 2/50, folder, fairseq)
+    # populate(data, '1h', 1/50, folder, fairseq)
+    # populate(data, '30m', 1/100, folder, fairseq)
     populate(data, '15m', 1/200, folder, fairseq)
     
-    populate(data, 'valid_big', 1/10, folder, fairseq)
-    populate(data, 'valid_small', 1/20, folder, fairseq)
+    # populate(data, 'valid_big', 1/10, folder, fairseq)
+    # populate(data, 'valid_small', 1/20, folder, fairseq)
 
-    populate(data, 'test', 2/10, folder, fairseq)
+    # populate(data, 'test', 2/10, folder, fairseq)
 
     
         
