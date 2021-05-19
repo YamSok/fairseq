@@ -214,7 +214,7 @@ def main():
     tokenizer=processor.feature_extractor,
     )
 
-    # trainer.train()
+    trainer.train()
 
 
 parser = argparse.ArgumentParser()
