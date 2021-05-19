@@ -204,7 +204,7 @@ def main():
         fp16=True,
         save_steps=400,
         eval_steps=400,
-        logging_steps=400,
+        logging_steps=4,
         learning_rate=3e-4,
         warmup_steps=500,
         save_total_limit=2,
