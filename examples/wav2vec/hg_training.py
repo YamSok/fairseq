@@ -3,6 +3,7 @@ import json
 import argparse
 import torch
 import pandas as pd
+import glob
 import numpy as np
 import IPython.display as ipd
 
@@ -149,16 +150,22 @@ class DataCollatorCTCWithPadding:
 
 def data_preparation():
     data = import_data()
-    gen_vocab(data)
-
-    tokenizer = Wav2Vec2CTCTokenizer("./vocab.json", unk_token="[UNK]", \
-        pad_token="[PAD]", word_delimiter_token="|")
-    feature_extractor = Wav2Vec2FeatureExtractor(feature_size=1, \
-        sampling_rate=16000, padding_value=0.0, do_normalize=True, return_attention_mask=True)
     global processor
-    processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer=tokenizer)
 
-    processor.save_pretrained('results_hg/')
+    if glob.glob("results_hg/processor/*"):
+        print(">> From pretrained processor ")
+        processor = Wav2Vec2Processor.from_pretrained("results_hg/processor")
+    else :
+        print(">> Creating processor ")
+
+        gen_vocab(data)
+        tokenizer = Wav2Vec2CTCTokenizer("./vocab.json", unk_token="[UNK]", \
+            pad_token="[PAD]", word_delimiter_token="|")
+        feature_extractor = Wav2Vec2FeatureExtractor(feature_size=1, \
+            sampling_rate=16000, padding_value=0.0, do_normalize=True, return_attention_mask=True)
+        global processor
+        processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer=tokenizer)
+        processor.save_pretrained('results_hg/processor/')
 
     dataset = data.map(speech_file_to_array_fn, \
          remove_columns=data.column_names["train"], num_proc=4)
