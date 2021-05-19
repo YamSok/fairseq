@@ -21,7 +21,8 @@ from datasets import load_dataset, Dataset, load_metric
 def format_csv_tracker(source, source_path, output):
     df = pd.read_csv(source)
     df["file"] = df["file"].apply(lambda x : os.path.join(source_path, x))
-    df["text"] = df["transcription"].apply(lambda x : x.upper())
+    df["text"] = df["transcription"]
+    # df["text"] = df["transcription"].apply(lambda x : x.upper())
     df = df.drop("transcription", axis=1)
     df.to_csv(output, index=False)
 
@@ -36,7 +37,7 @@ def import_data():
 
 def extract_all_chars(batch):
     all_text = " ".join(batch["text"])
-    vocab = list(set(all_text.upper()))
+    vocab = list(set(all_text))
     return {"vocab": [vocab], "all_text": [all_text]}
 
 def gen_vocab(data):
@@ -204,7 +205,7 @@ def main():
         fp16=True,
         save_strategy = "epoch",
         # save_steps=400,
-        eval_steps=25,
+        eval_steps=10,
         logging_strategy="steps",
         logging_dir="/home/ubuntu/dl4s/results_hg/logs/",
         logging_steps=4,
