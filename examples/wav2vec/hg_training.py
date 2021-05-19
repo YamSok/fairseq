@@ -29,7 +29,7 @@ def import_data():
     
     format_csv_tracker(TRAIN_CSV_RAW, TRAIN_PATH, TRAIN_CSV)
     format_csv_tracker(VALID_CSV_RAW, VALID_PATH, VALID_CSV)
-    
+
     data = load_dataset('csv', data_files={'train': TRAIN_CSV,'test': VALID_CSV})
     return data
 
@@ -149,8 +149,6 @@ class DataCollatorCTCWithPadding:
 
 def data_preparation():
     data = import_data()
-    print('import data done')
-    input()
     gen_vocab(data)
 
     tokenizer = Wav2Vec2CTCTokenizer("./vocab.json", unk_token="[UNK]", \
@@ -161,9 +159,7 @@ def data_preparation():
     processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer=tokenizer)
 
     dataset = data.map(speech_file_to_array_fn, \
-        remove_columns=data.column_names["train"], num_proc=4)
-    print("speech_file_to_array done")
-    input()
+         remove_columns=data.column_names["train"], num_proc=4)
     dataset_prepared = dataset.map(prepare_dataset, \
         remove_columns=dataset.column_names["train"], batch_size=8, num_proc=4, batched=True)
 
@@ -224,7 +220,7 @@ TRAIN_CSV_RAW = args.train
 VALID_CSV_RAW = args.valid
 
 TRAIN_PATH = TRAIN_CSV_RAW.split("dataset")[0]
-VALID_PATH = TRAIN_CSV_RAW.split("dataset")[0]
+VALID_PATH = VALID_CSV_RAW.split("dataset")[0]
 
 TRAIN_CSV = os.path.join(TRAIN_PATH, "train_hg.csv")
 VALID_CSV = os.path.join(VALID_PATH, "valid_hg.csv")
