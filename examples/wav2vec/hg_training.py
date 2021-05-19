@@ -204,7 +204,7 @@ def main():
         fp16=True,
         save_strategy = "epoch",
         # save_steps=400,
-        eval_steps=500,
+        eval_steps=25,
         logging_strategy="steps",
         logging_dir="/home/ubuntu/dl4s/results_hg/logs/",
         logging_steps=4,
