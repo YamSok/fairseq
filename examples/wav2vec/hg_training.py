@@ -198,7 +198,7 @@ def main():
         output_dir="./results_hg",
         group_by_length=True,
         save_strategy="steps",
-        save_steps="200",
+        save_steps=200,
         per_device_train_batch_size=16,
         gradient_accumulation_steps=2,
         evaluation_strategy="steps",
