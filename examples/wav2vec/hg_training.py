@@ -162,6 +162,8 @@ def data_preparation():
 
     dataset = data.map(speech_file_to_array_fn, \
         remove_columns=data.column_names["train"], num_proc=4)
+    print("speech_file_to_array done")
+    input()
     dataset_prepared = dataset.map(prepare_dataset, \
         remove_columns=dataset.column_names["train"], batch_size=8, num_proc=4, batched=True)
 
