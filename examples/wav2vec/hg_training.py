@@ -26,6 +26,7 @@ def format_csv_tracker(source, source_path, output):
 
 
 def import_data():
+    
     format_csv_tracker(TRAIN_CSV_RAW, TRAIN_PATH, TRAIN_CSV)
     format_csv_tracker(VALID_CSV_RAW, VALID_PATH, VALID_CSV)
     
@@ -148,6 +149,8 @@ class DataCollatorCTCWithPadding:
 
 def data_preparation():
     data = import_data()
+    print('import data done')
+    input()
     gen_vocab(data)
 
     tokenizer = Wav2Vec2CTCTokenizer("./vocab.json", unk_token="[UNK]", \
