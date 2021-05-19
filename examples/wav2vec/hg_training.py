@@ -158,6 +158,8 @@ def data_preparation():
     global processor
     processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer=tokenizer)
 
+    processor.save_pretrained('results_hg/')
+
     dataset = data.map(speech_file_to_array_fn, \
          remove_columns=data.column_names["train"], num_proc=4)
     dataset_prepared = dataset.map(prepare_dataset, \
@@ -184,7 +186,7 @@ def main():
         group_by_length=True,
         save_strategy="steps",
         save_steps="200",
-        per_device_train_batch_size=32,
+        per_device_train_batch_size=16,
         evaluation_strategy="steps",
         num_train_epochs=30,
         fp16=True,
@@ -206,7 +208,7 @@ def main():
     tokenizer=processor.feature_extractor,
     )
 
-    trainer.train()
+    # trainer.train()
 
 
 parser = argparse.ArgumentParser()
