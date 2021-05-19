@@ -180,10 +180,17 @@ def main():
     processor, dataset_prepared, data_collator = data_preparation()
 
     model = Wav2Vec2ForCTC.from_pretrained(
-    "facebook/wav2vec2-base", 
-    gradient_checkpointing=True, 
-    ctc_loss_reduction="mean", 
-    pad_token_id=processor.tokenizer.pad_token_id,)
+        "facebook/wav2vec2-base", 
+        attention_dropout=0.1,
+        hidden_dropout=0.1,
+        feat_proj_dropout=0.0,
+        mask_time_prob=0.05,
+        layerdrop=0.1,
+        gradient_checkpointing=True, 
+        ctc_loss_reduction="mean", 
+        pad_token_id=processor.tokenizer.pad_token_id,
+        vocab_size=len(processor.tokenizer)
+        )
 
     model.freeze_feature_extractor()
     
@@ -193,14 +200,15 @@ def main():
         save_strategy="steps",
         save_steps="200",
         per_device_train_batch_size=16,
+        gradient_accumulation_steps=2,
         evaluation_strategy="steps",
         num_train_epochs=30,
         fp16=True,
-        eval_steps=500,
+        eval_steps=200,
         logging_steps=500,
         learning_rate=1e-4,
         weight_decay=0.005,
-        warmup_steps=1000,
+        warmup_steps=500,
         save_total_limit=2,
     )
 
