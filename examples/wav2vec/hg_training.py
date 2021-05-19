@@ -195,7 +195,7 @@ def main():
     model.freeze_feature_extractor()
     
     training_args = TrainingArguments(
-        output_dir="./results_hg",
+        output_dir="results_hg",
         group_by_length=True,
         per_device_train_batch_size=16,
         gradient_accumulation_steps=2,
@@ -203,7 +203,7 @@ def main():
         num_train_epochs=30,
         fp16=True,
         save_steps=400,
-        eval_steps=400,
+        eval_steps=100,
         logging_strategy="epoch",
         logging_dir="results_hg/logs/",
         # logging_steps=4,
