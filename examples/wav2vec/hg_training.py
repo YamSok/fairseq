@@ -206,7 +206,7 @@ def main():
     tokenizer=processor.feature_extractor,
     )
 
-    # trainer.train(resume_from_checkpoint=True)
+    trainer.train(resume_from_checkpoint=True)
 
 
 parser = argparse.ArgumentParser()
