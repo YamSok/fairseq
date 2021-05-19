@@ -17,17 +17,17 @@ from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC, \
     Wav2Vec2CTCTokenizer, Wav2Vec2FeatureExtractor, TrainingArguments, Trainer
 from datasets import load_dataset, Dataset, load_metric
 
-def format_csv_tracker(source, output):
+def format_csv_tracker(source, source_path, output):
     df = pd.read_csv(source)
-    df["file"] = df["file"].apply(lambda x : os.path.join(DATASET_PATH, x))
+    df["file"] = df["file"].apply(lambda x : os.path.join(source_path, x))
     df["text"] = df["transcription"].apply(lambda x : x.upper())
     df = df.drop("transcription", axis=1)
     df.to_csv(output, index=False)
 
 
 def import_data():
-    format_csv_tracker(TRAIN_CSV_RAW, TRAIN_CSV)
-    format_csv_tracker(VALID_CSV_RAW, VALID_CSV)
+    format_csv_tracker(TRAIN_CSV_RAW, TRAIN_PATH, TRAIN_CSV)
+    format_csv_tracker(VALID_CSV_RAW, VALID_PATH, VALID_CSV)
     
     data = load_dataset('csv', data_files={'train': TRAIN_CSV,'test': VALID_CSV})
     return data
@@ -217,9 +217,12 @@ args = parser.parse_args()
 
 TRAIN_CSV_RAW = args.train
 VALID_CSV_RAW = args.valid
-DATASET_PATH = TRAIN_CSV_RAW.split("dataset")[0]
-TRAIN_CSV = os.path.join(DATASET_PATH, "train_hg.csv")
-VALID_CSV = os.path.join(DATASET_PATH, "valid_hg.csv")
+
+TRAIN_PATH = TRAIN_CSV_RAW.split("dataset")[0]
+VALID_PATH = TRAIN_CSV_RAW.split("dataset")[0]
+
+TRAIN_CSV = os.path.join(TRAIN_PATH, "train_hg.csv")
+VALID_CSV = os.path.join(VALID_PATH, "valid_hg.csv")
 
 
 main()
