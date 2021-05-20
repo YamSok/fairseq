@@ -96,8 +96,7 @@ if __name__ == "__main__":
 
     if not model_dir :
         print("benchmark modèle HG")
-        # processor = Wav2Vec2Processor.from_pretrained(processor_dir)
-        # model = Wav2Vec2ForCTC.from_pretrained(model_dir)
+
 
         processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
         model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
@@ -110,6 +109,8 @@ if __name__ == "__main__":
         # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base")
     else :
         print("benchmark local model")
+        processor = Wav2Vec2Processor.from_pretrained(processor_dir)
+        model = Wav2Vec2ForCTC.from_pretrained(model_dir)
 
     TEST_CSV_RAW = args.test
     TEST_PATH = TEST_CSV_RAW.split("dataset")[0]
