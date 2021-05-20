@@ -4,6 +4,7 @@ import argparse
 from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
 from datasets import load_dataset, Dataset, load_metric
 import pandas as pd
+import random
 import os
 from jiwer import wer
 
@@ -49,6 +50,17 @@ def map_to_result(batch):
   
     return batch
 
+def show_random_elements(dataset, num_examples=10):
+    assert num_examples <= len(dataset), "Can't pick more elements than there are in the dataset."
+    picks = []
+    for _ in range(num_examples):
+        pick = random.randint(0, len(dataset)-1)
+        while pick in picks:
+            pick = random.randint(0, len(dataset)-1)
+        picks.append(pick)
+    
+    df = pd.DataFrame(dataset[picks])
+    print(df)
 
 def main(out):
     data = import_data(TEST_CSV_RAW, TEST_PATH, TEST_CSV)
@@ -61,6 +73,8 @@ def main(out):
     wer_metric = load_metric("wer")
 
     print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])))
+    print("\n")
+    show_random_elements(results, num_examples=10)
     wer_log = os.path.join(out, "wer.txt")
     with open(wer_log, "w") as err_file:
         print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])), file=err_file)
@@ -85,11 +99,11 @@ if __name__ == "__main__":
     # model = Wav2Vec2ForCTC.from_pretrained(model_dir)
 
     processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
-    model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
+    # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
 
     # ## add base et xlsr base
     # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
-    # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53")
+    model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53")
 
     # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base")
     # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base")
