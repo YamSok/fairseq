@@ -245,7 +245,7 @@ def data_preparation_v2():
 def main():
 
     # processor, dataset_prepared, data_collator = data_preparation()
-    processor, common_voice_train, common_voice_test, data_collator = data_preparation()
+    processor, common_voice_train, common_voice_test, data_collator = data_preparation_v2()
 
 
     model_str = "facebook/wav2vec2-base" if MODEL == "base" else "facebook/wav2vec2-base-10k-voxpopuli"
