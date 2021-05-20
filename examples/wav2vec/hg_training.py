@@ -2,6 +2,8 @@ import os
 import json
 import argparse
 import torch
+import torchaudio
+import librosa
 import pandas as pd
 import glob
 import numpy as np
@@ -179,9 +181,72 @@ def data_preparation():
 
     return processor, dataset_prepared, data_collator
 
+def remove_special_characters(batch):
+    chars_to_ignore_regex = '[\,\?\.\!\-\;\:\"\“\%\‘\”\�]'
+
+    batch["sentence"] = re.sub(chars_to_ignore_regex, '', batch["sentence"]).lower() + " "
+    return batch
+
+def speech_file_to_array_fn_v2(batch):
+    speech_array, sampling_rate = torchaudio.load(batch["path"])
+    batch["speech"] = speech_array[0].numpy()
+    batch["sampling_rate"] = sampling_rate
+    batch["target_text"] = batch["sentence"]
+    return batch
+
+def resample(batch):
+    batch["speech"] = librosa.resample(np.asarray(batch["speech"]), 48_000, 16_000)
+    batch["sampling_rate"] = 16_000
+    return batch
+
+def data_preparation_v2():
+    common_voice_train = load_dataset("common_voice", "fr", split="train+validation")
+    common_voice_test = load_dataset("common_voice", "fr", split="test")
+    common_voice_train = common_voice_train.remove_columns(["accent", "age", "client_id", "down_votes", "gender", "locale", "segment", "up_votes"])
+    common_voice_test = common_voice_test.remove_columns(["accent", "age", "client_id", "down_votes", "gender", "locale", "segment", "up_votes"])
+    common_voice_train = common_voice_train.map(remove_special_characters)
+    common_voice_test = common_voice_test.map(remove_special_characters)
+
+    vocab_train = common_voice_train.map(extract_all_chars, batched=True, batch_size=-1, keep_in_memory=True, remove_columns=common_voice_train.column_names)
+    vocab_test = common_voice_test.map(extract_all_chars, batched=True, batch_size=-1, keep_in_memory=True, remove_columns=common_voice_test.column_names)
+    vocab_list = list(set(vocab_train["vocab"][0]) | set(vocab_test["vocab"][0]))
+    vocab_dict = {v: k for k, v in enumerate(vocab_list)}
+    vocab_dict["|"] = vocab_dict[" "]
+    del vocab_dict[" "]
+    vocab_dict["[UNK]"] = len(vocab_dict)
+    vocab_dict["[PAD]"] = len(vocab_dict)
+
+    with open(f'results_hg/{MODEL}/{LABEL}/vocab.json', 'w') as vocab_file:
+        json.dump(vocab_dict, vocab_file)
+
+    global processor
+
+    print(">> Creating processor ")
+
+    tokenizer = Wav2Vec2CTCTokenizer(f"results_hg/{MODEL}/{LABEL}/vocab.json", unk_token="[UNK]", \
+        pad_token="[PAD]", word_delimiter_token="|")
+    feature_extractor = Wav2Vec2FeatureExtractor(feature_size=1, \
+        sampling_rate=16000, padding_value=0.0, do_normalize=True, return_attention_mask=True)
+    processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer=tokenizer)
+    processor.save_pretrained(f'results_hg/{MODEL}/{LABEL}/processor/')
+
+    common_voice_train = common_voice_train.map(speech_file_to_array_fn_v2, remove_columns=common_voice_train.column_names)
+    common_voice_test = common_voice_test.map(speech_file_to_array_fn_v2, remove_columns=common_voice_test.column_names)
+    
+    common_voice_train = common_voice_train.map(resample, num_proc=4)
+    common_voice_test = common_voice_test.map(resample, num_proc=4)
+    data_collator = DataCollatorCTCWithPadding(processor=processor, padding=True)
+
+    common_voice_train = common_voice_train.map(prepare_dataset, remove_columns=common_voice_train.column_names, batch_size=8, num_proc=4, batched=True)
+    common_voice_test = common_voice_test.map(prepare_dataset, remove_columns=common_voice_test.column_names, batch_size=8, num_proc=4, batched=True)
+
+    return processor, common_voice_train, common_voice_test, data_collator
+
 def main():
 
-    processor, dataset_prepared, data_collator = data_preparation()
+    # processor, dataset_prepared, data_collator = data_preparation()
+    processor, common_voice_train, common_voice_test, data_collator = data_preparation()
+
 
     model_str = "facebook/wav2vec2-base" if MODEL == "base" else "facebook/wav2vec2-base-10k-voxpopuli"
 
@@ -227,8 +292,8 @@ def main():
     data_collator=data_collator,
     args=training_args,
     compute_metrics=compute_metrics,
-    train_dataset=dataset_prepared["train"],
-    eval_dataset=dataset_prepared["test"],
+    train_dataset=common_voice_train,
+    eval_dataset=common_voice_test,
     tokenizer=processor.feature_extractor,
     )
 
