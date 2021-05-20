@@ -301,25 +301,26 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train", default=None, type=str,
-                        required=True, help="Train data tracker csv")
-    parser.add_argument("--valid", default=None, type=str,
-                        required=True, help="Valid data tracker csv")
+    # parser.add_argument("--train", default=None, type=str,
+    #                     required=True, help="Train data tracker csv")
+    # parser.add_argument("--valid", default=None, type=str,
+    #                     required=True, help="Valid data tracker csv")
     parser.add_argument("--model", default=None, type=str,
                         required=True, help="Pretrained model (base / xlsr)")
     args = parser.parse_args()
 
-    TRAIN_CSV_RAW = args.train
-    VALID_CSV_RAW = args.valid  
+    # TRAIN_CSV_RAW = args.train
+    # VALID_CSV_RAW = args.valid  
     MODEL = args.model #Facultatif : sert à ranger les modèles dans les bons dossiers
 
-    TRAIN_PATH = TRAIN_CSV_RAW.split("dataset")[0]
-    VALID_PATH = VALID_CSV_RAW.split("dataset")[0]
+    # TRAIN_PATH = TRAIN_CSV_RAW.split("dataset")[0]
+    # VALID_PATH = VALID_CSV_RAW.split("dataset")[0]
 
-    TRAIN_CSV = os.path.join(TRAIN_PATH, "train_hg.csv")
-    VALID_CSV = os.path.join(VALID_PATH, "valid_hg.csv")
+    # TRAIN_CSV = os.path.join(TRAIN_PATH, "train_hg.csv")
+    # VALID_CSV = os.path.join(VALID_PATH, "valid_hg.csv")
 
-    LABEL = TRAIN_PATH.split('_')[-1][:-1]
+    # LABEL = TRAIN_PATH.split('_')[-1][:-1]
+    LABEL = "commonvoice"
 
 ########
 ########
