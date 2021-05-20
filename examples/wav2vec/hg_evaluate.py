@@ -15,8 +15,8 @@ def map_to_array(batch):
 def import_data(source, source_path, output):
     df = pd.read_csv(source)
     df["file"] = df["file"].apply(lambda x : os.path.join(source_path, x))
-    df["text"] = df["transcription"]
-    # df["text"] = df["transcription"].apply(lambda x : x.upper())
+    # df["text"] = df["transcription"]
+    df["text"] = df["transcription"].apply(lambda x : x.upper())
     df = df.drop("transcription", axis=1)
     df.to_csv(output, index=False)
     data = load_dataset('csv', data_files=output)
@@ -45,7 +45,7 @@ def map_to_result(batch):
     pred_ids = torch.argmax(logits, dim=-1)
     # print(processor.batch_decode(pred_ids)[0])
     
-    batch["pred_str"] = processor.batch_decode(pred_ids)[0]
+    batch["pred_str"] = processor.batch_decode(pred_ids)[0].upper()
   
     return batch
 
@@ -59,10 +59,10 @@ def main(out):
     input()
     wer_metric = load_metric("wer")
 
-    print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"].upper(), references=results["text"].upper())))
+    print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])))
     wer_log = os.path.join(out, "wer.txt")
     with open(wer_log, "w") as err_file:
-        print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"].upper(), references=results["text"].upper())), file=err_file)
+        print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])), file=err_file)
 
 
 if __name__ == "__main__":
