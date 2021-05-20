@@ -59,10 +59,10 @@ def main(out):
     input()
     wer_metric = load_metric("wer")
 
-    print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])))
+    print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"].upper(), references=results["text"].upper())))
     wer_log = os.path.join(out, "wer.txt")
     with open(wer_log, "w") as err_file:
-        print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])), file=err_file)
+        print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"].upper(), references=results["text"].upper())), file=err_file)
 
 
 if __name__ == "__main__":
