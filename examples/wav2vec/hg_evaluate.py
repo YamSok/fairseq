@@ -26,7 +26,6 @@ def import_data(source, source_path, output):
 def map_to_result(batch):
     
     if torch.cuda.is_available():
-        print("#### CUDA AVAILABLE ####")
         model.to("cuda")
         input_values = processor(
             batch["speech"], 
@@ -60,10 +59,10 @@ def main(out):
     input()
     wer_metric = load_metric("wer")
 
-    print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["transcription"])))
+    print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])))
     wer_log = os.path.join(out, "wer.txt")
     with open(wer_log, "w") as err_file:
-        print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["transcription"])), file=err_file)
+        print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])), file=err_file)
 
 
 if __name__ == "__main__":
