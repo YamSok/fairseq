@@ -200,8 +200,8 @@ def resample(batch):
     return batch
 
 def data_preparation_v2():
-    common_voice_train = load_dataset("common_voice", "fr", split="train+validation")
-    common_voice_test = load_dataset("common_voice", "fr", split="test")
+    common_voice_train = load_dataset("common_voice", "tr", split="train+validation")
+    common_voice_test = load_dataset("common_voice", "tr", split="test")
     common_voice_train = common_voice_train.remove_columns(["accent", "age", "client_id", "down_votes", "gender", "locale", "segment", "up_votes"])
     common_voice_test = common_voice_test.remove_columns(["accent", "age", "client_id", "down_votes", "gender", "locale", "segment", "up_votes"])
     common_voice_train = common_voice_train.map(remove_special_characters)
