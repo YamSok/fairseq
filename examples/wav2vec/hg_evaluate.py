@@ -50,7 +50,7 @@ def map_to_result(batch):
   
     return batch
 
-def show_random_elements(dataset, num_examples=10):
+def show_random_elements(dataset, out, num_examples=10):
     assert num_examples <= len(dataset), "Can't pick more elements than there are in the dataset."
     picks = []
     for _ in range(num_examples):
@@ -58,9 +58,11 @@ def show_random_elements(dataset, num_examples=10):
         while pick in picks:
             pick = random.randint(0, len(dataset)-1)
         picks.append(pick)
-    
+        
     df = pd.DataFrame(dataset[picks])[['text', 'pred_str']]
-    print(df)
+    example_log = os.path.join(out, "example.txt")
+    with open(example_log, "w") as ex_log:
+        print(df, file=ex_log)
 
 def main(out):
     data = import_data(TEST_CSV_RAW, TEST_PATH, TEST_CSV)
@@ -70,7 +72,7 @@ def main(out):
 
     print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])))
     print("\n")
-    show_random_elements(results, num_examples=10)
+    show_random_elements(results, out, num_examples=10)
     wer_log = os.path.join(out, "wer.txt")
     with open(wer_log, "w") as err_file:
         print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])), file=err_file)
