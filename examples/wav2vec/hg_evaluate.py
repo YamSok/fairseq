@@ -87,11 +87,11 @@ if __name__ == "__main__":
     # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
 
     # ## add base et xlsr base
-    # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
-    # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53")
+    processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
+    model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53")
 
-    processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base")
-    model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base")
+    # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base")
+    # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base")
 
     TEST_CSV_RAW = args.test
     TEST_PATH = TEST_CSV_RAW.split("dataset")[0]
