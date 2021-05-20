@@ -59,7 +59,7 @@ def show_random_elements(dataset, num_examples=10):
             pick = random.randint(0, len(dataset)-1)
         picks.append(pick)
     
-    df = pd.DataFrame(dataset[picks])
+    df = pd.DataFrame(dataset[picks][['text', 'pred_str']])
     print(df)
 
 def main(out):
