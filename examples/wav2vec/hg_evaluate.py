@@ -48,7 +48,7 @@ def map_to_result(batch):
     return batch
 
 
-def main():
+def main(out):
     data = import_data(TEST_CSV_RAW, TEST_PATH, TEST_CSV)
 
     results = data.map(map_to_result)
@@ -92,4 +92,4 @@ if __name__ == "__main__":
     TEST_PATH = TEST_CSV_RAW.split("dataset")[0]
     TEST_CSV = os.path.join(TEST_PATH, "test_hg.csv")
 
-    main(model_dir)
+    main(out)
