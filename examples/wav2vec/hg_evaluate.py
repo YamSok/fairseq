@@ -98,8 +98,8 @@ if __name__ == "__main__":
         print("benchmark modèle HG")
 
         
-        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
-        model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
+        # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
+        # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
 
         # ## add base et xlsr base
         # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
@@ -107,6 +107,9 @@ if __name__ == "__main__":
 
         # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base")
         # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base")
+
+        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
+        model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
     else :
         print("benchmark local model")
         processor = Wav2Vec2Processor.from_pretrained(processor_dir)
