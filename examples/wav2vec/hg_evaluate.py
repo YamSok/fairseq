@@ -97,6 +97,7 @@ if __name__ == "__main__":
     if not model_dir :
         print("benchmark modèle HG")
 
+       
         
         # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
         # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
