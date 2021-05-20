@@ -26,6 +26,7 @@ def import_data(source, source_path, output):
 def map_to_result(batch):
     
     if torch.cuda.is_available():
+        print("#### CUDA AVAILABLE ####")
         model.to("cuda")
         input_values = processor(
             batch["speech"], 
@@ -43,6 +44,8 @@ def map_to_result(batch):
         logits = model(input_values).logits
 
     pred_ids = torch.argmax(logits, dim=-1)
+    print(processor.batch_decode(pred_ids)[0])
+    
     batch["pred_str"] = processor.batch_decode(pred_ids)[0]
   
     return batch
@@ -52,6 +55,8 @@ def main(out):
     data = import_data(TEST_CSV_RAW, TEST_PATH, TEST_CSV)
 
     results = data.map(map_to_result)
+    print(results)
+    input()
     wer_metric = load_metric("wer")
 
     print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["transcription"])))
