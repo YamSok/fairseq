@@ -211,7 +211,7 @@ def main():
         fp16=True,
         save_strategy = "epoch",
         # save_steps=400,
-        eval_steps=10,
+        eval_steps=20,
         logging_strategy="steps",
         logging_steps=4,
         learning_rate=3e-4,
