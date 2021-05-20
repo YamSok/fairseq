@@ -251,7 +251,7 @@ if __name__ == "__main__":
     TRAIN_CSV = os.path.join(TRAIN_PATH, "train_hg.csv")
     VALID_CSV = os.path.join(VALID_PATH, "valid_hg.csv")
 
-    LABEL = TRAIN_PATH.split('_')[-1].split(".csv")[0]
+    LABEL = TRAIN_PATH.split('_')[-1][:-1]
 
 
     main()
