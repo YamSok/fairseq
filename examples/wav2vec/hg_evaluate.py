@@ -60,6 +60,7 @@ def show_random_elements(dataset, out, num_examples=10):
         picks.append(pick)
         
     df = pd.DataFrame(dataset[picks])[['text', 'pred_str']]
+    print(df)
     example_log = os.path.join(out, "example.txt")
     with open(example_log, "w") as ex_log:
         print(df, file=ex_log)
@@ -102,11 +103,11 @@ if __name__ == "__main__":
         # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
 
         # ## add base et xlsr base
-        # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
-        # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53")
+        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
+        model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53")
 
-        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base")
-        model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base")
+        # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base")
+        # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base")
     else :
         print("benchmark local model")
 
