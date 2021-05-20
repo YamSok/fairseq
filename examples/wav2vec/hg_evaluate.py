@@ -44,7 +44,7 @@ def map_to_result(batch):
         logits = model(input_values).logits
 
     pred_ids = torch.argmax(logits, dim=-1)
-    print(processor.batch_decode(pred_ids)[0])
+    # print(processor.batch_decode(pred_ids)[0])
     
     batch["pred_str"] = processor.batch_decode(pred_ids)[0]
   
@@ -55,6 +55,7 @@ def main(out):
     data = import_data(TEST_CSV_RAW, TEST_PATH, TEST_CSV)
 
     results = data.map(map_to_result)
+    results = results["train"]
     print(results)
     input()
     wer_metric = load_metric("wer")
