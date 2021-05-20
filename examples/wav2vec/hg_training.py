@@ -6,7 +6,7 @@ import pandas as pd
 import glob
 import numpy as np
 import IPython.display as ipd
-
+import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
 
@@ -58,10 +58,13 @@ def map_to_array(batch):
     return batch
 
 def speech_file_to_array_fn(batch):
+    chars_to_ignore_regex = '[\,\?\.\!\-\;\:\"]'
     speech_array, sampling_rate = sf.read(batch["file"])
     batch["speech"] = speech_array
     batch["sampling_rate"] = sampling_rate
-    batch["target_text"] = batch["text"]
+    # batch["target_text"] = batch["text"]
+    batch["target_text"] = re.sub(chars_to_ignore_regex, '', batch["text"]).lower().replace("’", "'")
+
     return batch
 
 def prepare_dataset(batch):
