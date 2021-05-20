@@ -49,7 +49,7 @@ def gen_vocab(data):
     del vocab_dict[" "]
     vocab_dict["[UNK]"] = len(vocab_dict)
     vocab_dict["[PAD]"] = len(vocab_dict)
-    with open('vocab.json', 'w') as vocab_file:
+    with open(f'results_{MODEL}/{LABEL}/vocab.json', 'w') as vocab_file:
         json.dump(vocab_dict, vocab_file)
 
 def map_to_array(batch):
@@ -153,19 +153,19 @@ def data_preparation():
     data = import_data()
     global processor
 
-    if glob.glob("results_hg/processor/*"):
+    if glob.glob(f"results_{MODEL}/{LABEL}/processor/*"):
         print(">> From pretrained processor ")
-        processor = Wav2Vec2Processor.from_pretrained("results_hg/processor")
+        processor = Wav2Vec2Processor.from_pretrained(f"results_{MODEL}/{LABEL}/processor")
     else :
         print(">> Creating processor ")
 
         gen_vocab(data)
-        tokenizer = Wav2Vec2CTCTokenizer("./vocab.json", unk_token="[UNK]", \
+        tokenizer = Wav2Vec2CTCTokenizer(f"results_{MODEL}/{LABEL}/vocab.json", unk_token="[UNK]", \
             pad_token="[PAD]", word_delimiter_token="|")
         feature_extractor = Wav2Vec2FeatureExtractor(feature_size=1, \
             sampling_rate=16000, padding_value=0.0, do_normalize=True, return_attention_mask=True)
         processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer=tokenizer)
-        processor.save_pretrained('results_hg/processor/')
+        processor.save_pretrained(f'results_{MODEL}/{LABEL}/processor/')
 
     dataset = data.map(speech_file_to_array_fn, \
          remove_columns=data.column_names["train"], num_proc=4)
@@ -180,8 +180,14 @@ def main():
 
     processor, dataset_prepared, data_collator = data_preparation()
 
+    model_str = "facebook/wav2vec2-base" if MODEL == "base" else "facebook/wav2vec2-large-xlsr-53"
+
+    print(">> Starting fine-tuning on model " + model_str )
+    print(">> Training dataset :", LABEL)
+    print("\n\n")
+
     model = Wav2Vec2ForCTC.from_pretrained(
-        "facebook/wav2vec2-base", 
+        model_str, 
         attention_dropout=0.1,
         hidden_dropout=0.1,
         feat_proj_dropout=0.0,
@@ -196,7 +202,7 @@ def main():
     model.freeze_feature_extractor()
     
     training_args = TrainingArguments(
-        output_dir="/home/ubuntu/dl4s/results_hg",
+        output_dir=f"/home/ubuntu/dl4s/results_{MODEL}/{LABEL}/",
         group_by_length=True,
         per_device_train_batch_size=16,
         gradient_accumulation_steps=2,
@@ -207,7 +213,6 @@ def main():
         # save_steps=400,
         eval_steps=10,
         logging_strategy="steps",
-        logging_dir="/home/ubuntu/dl4s/results_hg/logs/",
         logging_steps=4,
         learning_rate=3e-4,
         warmup_steps=100,
@@ -226,22 +231,27 @@ def main():
 
     trainer.train()
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--train", default=None, type=str,
+                        required=True, help="Train data tracker csv")
+    parser.add_argument("--valid", default=None, type=str,
+                        required=True, help="Valid ata subset label")
+    parser.add_argument("--model", default=None, type=str,
+                        required=True, help="Pretrained model (base / xlsr)")
+    args = parser.parse_args()
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--train", default=None, type=str,
-                    required=True, help="Train data tracker csv")
-parser.add_argument("--valid", default=None, type=str,
-                    required=True, help="Valid ata subset label")
-args = parser.parse_args()
+    TRAIN_CSV_RAW = args.train
+    VALID_CSV_RAW = args.valid
+    MODEL = args.model
 
-TRAIN_CSV_RAW = args.train
-VALID_CSV_RAW = args.valid
+    TRAIN_PATH = TRAIN_CSV_RAW.split("dataset")[0]
+    VALID_PATH = VALID_CSV_RAW.split("dataset")[0]
 
-TRAIN_PATH = TRAIN_CSV_RAW.split("dataset")[0]
-VALID_PATH = VALID_CSV_RAW.split("dataset")[0]
+    TRAIN_CSV = os.path.join(TRAIN_PATH, "train_hg.csv")
+    VALID_CSV = os.path.join(VALID_PATH, "valid_hg.csv")
 
-TRAIN_CSV = os.path.join(TRAIN_PATH, "train_hg.csv")
-VALID_CSV = os.path.join(VALID_PATH, "valid_hg.csv")
+    LABEL = TRAIN_PATH.split('_')[-1].split(".csv")[0]
 
 
-main()
+    main()
