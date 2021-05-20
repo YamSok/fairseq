@@ -183,7 +183,7 @@ def main():
 
     processor, dataset_prepared, data_collator = data_preparation()
 
-    model_str = "facebook/wav2vec2-base" if MODEL == "base" else "facebook/wav2vec2-large-xlsr-53-french"
+    model_str = "facebook/wav2vec2-base" if MODEL == "base" else "facebook/wav2vec2-large-xlsr-53"
 
     print(">> Starting fine-tuning on model " + model_str )
     print(">> Training dataset :", LABEL)
