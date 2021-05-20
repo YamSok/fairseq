@@ -38,7 +38,7 @@ def import_data():
     return data
 
 def extract_all_chars(batch):
-    all_text = " ".join(batch["text"])
+    all_text = " ".join(batch["sentence"])
     vocab = list(set(all_text))
     return {"vocab": [vocab], "all_text": [all_text]}
 
