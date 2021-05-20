@@ -29,13 +29,13 @@ def map_to_result(batch):
         model.to("cuda")
         input_values = processor(
             batch["speech"], 
-            sampling_rate=batch["sampling_rate"], 
+            sampling_rate=16000, 
             return_tensors="pt"
         ).input_values.to("cuda")
     else:
         input_values = processor(
             batch["speech"], 
-            sampling_rate=batch["sampling_rate"], 
+            sampling_rate=16000, 
             return_tensors="pt"
         ).input_values
 
