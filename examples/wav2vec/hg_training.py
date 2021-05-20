@@ -236,14 +236,14 @@ if __name__ == "__main__":
     parser.add_argument("--train", default=None, type=str,
                         required=True, help="Train data tracker csv")
     parser.add_argument("--valid", default=None, type=str,
-                        required=True, help="Valid ata subset label")
+                        required=True, help="Valid data tracker csv")
     parser.add_argument("--model", default=None, type=str,
                         required=True, help="Pretrained model (base / xlsr)")
     args = parser.parse_args()
 
     TRAIN_CSV_RAW = args.train
-    VALID_CSV_RAW = args.valid
-    MODEL = args.model
+    VALID_CSV_RAW = args.valid  
+    MODEL = args.model #Facultatif : sert à ranger les modèles dans les bons dossiers
 
     TRAIN_PATH = TRAIN_CSV_RAW.split("dataset")[0]
     VALID_PATH = VALID_CSV_RAW.split("dataset")[0]
@@ -253,5 +253,14 @@ if __name__ == "__main__":
 
     LABEL = TRAIN_PATH.split('_')[-1][:-1]
 
+########
+########
+# Attention : modifie le chemin  f"results_hg/{MODEL}/{LABEL}/
+# qui apparaît plusieurs fois : c'est là que tout s'enregistre 
+# processor, checkpints, vocab ...
+
+# Attention aussi à mettre à jour les tracker csv dataset_FR_[label].csv
+
+# Ex usage du script : python hg_trainer --train data/WP1_15m/dataset_FR_15m.csv --valid data/WP1_valid_small/dataset_FR_valid_small.csv
 
     main()
