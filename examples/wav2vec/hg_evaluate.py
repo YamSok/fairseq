@@ -64,12 +64,8 @@ def show_random_elements(dataset, num_examples=10):
 
 def main(out):
     data = import_data(TEST_CSV_RAW, TEST_PATH, TEST_CSV)
-    print(data["text"])
-    input()
     results = data.map(map_to_result)
     results = results["train"]
-    print(results)
-    input()
     wer_metric = load_metric("wer")
 
     print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])))
