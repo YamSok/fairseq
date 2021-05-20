@@ -49,7 +49,7 @@ def gen_vocab(data):
     del vocab_dict[" "]
     vocab_dict["[UNK]"] = len(vocab_dict)
     vocab_dict["[PAD]"] = len(vocab_dict)
-    with open(f'results_{MODEL}/{LABEL}/vocab.json', 'w') as vocab_file:
+    with open(f'results_hg/{MODEL}/{LABEL}/vocab.json', 'w') as vocab_file:
         json.dump(vocab_dict, vocab_file)
 
 def map_to_array(batch):
@@ -153,19 +153,19 @@ def data_preparation():
     data = import_data()
     global processor
 
-    if glob.glob(f"results_{MODEL}/{LABEL}/processor/*"):
+    if glob.glob(f"results_hg/{MODEL}/{LABEL}/processor/*"):
         print(">> From pretrained processor ")
-        processor = Wav2Vec2Processor.from_pretrained(f"results_{MODEL}/{LABEL}/processor")
+        processor = Wav2Vec2Processor.from_pretrained(f"results_hg/{MODEL}/{LABEL}/processor")
     else :
         print(">> Creating processor ")
 
         gen_vocab(data)
-        tokenizer = Wav2Vec2CTCTokenizer(f"results_{MODEL}/{LABEL}/vocab.json", unk_token="[UNK]", \
+        tokenizer = Wav2Vec2CTCTokenizer(f"results_hg/{MODEL}/{LABEL}/vocab.json", unk_token="[UNK]", \
             pad_token="[PAD]", word_delimiter_token="|")
         feature_extractor = Wav2Vec2FeatureExtractor(feature_size=1, \
             sampling_rate=16000, padding_value=0.0, do_normalize=True, return_attention_mask=True)
         processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer=tokenizer)
-        processor.save_pretrained(f'results_{MODEL}/{LABEL}/processor/')
+        processor.save_pretrained(f'results_hg/{MODEL}/{LABEL}/processor/')
 
     dataset = data.map(speech_file_to_array_fn, \
          remove_columns=data.column_names["train"], num_proc=4)
@@ -202,7 +202,7 @@ def main():
     model.freeze_feature_extractor()
     
     training_args = TrainingArguments(
-        output_dir=f"/home/ubuntu/dl4s/results_{MODEL}/{LABEL}/",
+        output_dir=f"/home/ubuntu/dl4s/results_hg/{MODEL}/{LABEL}/",
         group_by_length=True,
         per_device_train_batch_size=16,
         gradient_accumulation_steps=2,

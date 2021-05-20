@@ -52,7 +52,8 @@ def map_to_result(batch):
 
 def main(out):
     data = import_data(TEST_CSV_RAW, TEST_PATH, TEST_CSV)
-
+    print(data["text"])
+    input()
     results = data.map(map_to_result)
     results = results["train"]
     print(results)
