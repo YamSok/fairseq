@@ -20,20 +20,19 @@ from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC, \
     Wav2Vec2CTCTokenizer, Wav2Vec2FeatureExtractor, TrainingArguments, Trainer
 from datasets import load_dataset, Dataset, load_metric
 
-def format_csv_tracker(source, source_path, output, n):
+def format_csv_tracker(source, source_path, output):
     df = pd.read_csv(source)
     df["file"] = df["file"].apply(lambda x : os.path.join(source_path, x))
     df["text"] = df["transcription"]
     # df["text"] = df["transcription"].apply(lambda x : x.upper())
     df = df.drop("transcription", axis=1)
-    df = df.sample(n)
     df.to_csv(output, index=False)
 
 
 def import_data():
     
-    format_csv_tracker(TRAIN_CSV_RAW, TRAIN_PATH, TRAIN_CSV, 3300)
-    format_csv_tracker(VALID_CSV_RAW, VALID_PATH, VALID_CSV, 1600)
+    format_csv_tracker(TRAIN_CSV_RAW, TRAIN_PATH, TRAIN_CSV)
+    format_csv_tracker(VALID_CSV_RAW, VALID_PATH, VALID_CSV)
 
     data = load_dataset('csv', data_files={'train': TRAIN_CSV,'test': VALID_CSV})
     print(data)
