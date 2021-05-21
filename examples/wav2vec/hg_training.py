@@ -243,7 +243,7 @@ def data_preparation_v2():
 
     return processor, common_voice_train, common_voice_test, data_collator
 
-def main():
+def main(checkpoint):
 
     processor, dataset_prepared, data_collator = data_preparation()
     # processor, common_voice_train, common_voice_test, data_collator = data_preparation_v2()
@@ -340,4 +340,4 @@ if __name__ == "__main__":
 
 # Ex usage du script : python hg_trainer --train data/WP1_15m/dataset_FR_15m.csv --valid data/WP1_valid_small/dataset_FR_valid_small.csv
 
-    main()
+    main(checkpoint)
