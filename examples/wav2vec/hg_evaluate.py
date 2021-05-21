@@ -27,8 +27,8 @@ def import_data(source, source_path, output):
 
 def map_to_result(batch):
     
-    # if torch.cuda.is_available():
-    if False:
+    if torch.cuda.is_available():
+    # if False:
         model.to("cuda")
         input_values = processor(
             batch["speech"], 
