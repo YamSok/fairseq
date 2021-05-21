@@ -80,7 +80,8 @@ def main(out):
     show_random_elements(results, out, num_examples=10)
     wer_log = os.path.join(out, "wer.txt")
     with open(wer_log, "w") as err_file:
-        print(f"Inference time : {duration:.2f} \n" + "Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])), file=err_file)
+        print(f"Dataset : {TEST_CSV_RAW}" + f"\nInference time : {duration:.2f} \n" + 
+        "Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])), file=err_file)
 
 
 if __name__ == "__main__":
@@ -124,4 +125,6 @@ if __name__ == "__main__":
     TEST_PATH = TEST_CSV_RAW.split("dataset")[0]
     TEST_CSV = os.path.join(TEST_PATH, "test_hg.csv")
 
+    start = time.time()
     main(out)
+    print(f"\n\nOverall time: {time.time() - start} s.")
