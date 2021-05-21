@@ -273,7 +273,7 @@ def main():
     training_args = TrainingArguments(
         output_dir=f"/home/ubuntu/dl4s/results_hg/{MODEL}/{LABEL}/",
         group_by_length=True,
-        per_device_train_batch_size=16,
+        per_device_train_batch_size=8,
         gradient_accumulation_steps=2,
         evaluation_strategy="steps",
         num_train_epochs=30,
