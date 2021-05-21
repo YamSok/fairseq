@@ -7,6 +7,7 @@ import pandas as pd
 import random
 import os
 from jiwer import wer
+import time
 
 def map_to_array(batch):
     speech, _ = sf.read(batch["file"])
@@ -67,7 +68,10 @@ def show_random_elements(dataset, out, num_examples=10):
 
 def main(out):
     data = import_data(TEST_CSV_RAW, TEST_PATH, TEST_CSV)
+    start = time.time()
     results = data.map(map_to_result)
+    end  = time.time()
+    duration = end - start
     results = results["train"]
     wer_metric = load_metric("wer")
 
@@ -76,7 +80,7 @@ def main(out):
     show_random_elements(results, out, num_examples=10)
     wer_log = os.path.join(out, "wer.txt")
     with open(wer_log, "w") as err_file:
-        print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])), file=err_file)
+        print(f"Inference time : {duration:.2f} \n" + "Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])), file=err_file)
 
 
 if __name__ == "__main__":
@@ -99,8 +103,8 @@ if __name__ == "__main__":
 
        
         
-        # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
-        # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
+        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
+        model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
 
         # ## add base et xlsr base
         # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
@@ -109,8 +113,8 @@ if __name__ == "__main__":
         # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base")
         # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base")
 
-        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
-        model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
+        # processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
+        # model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
     else :
         print("benchmark local model")
         processor = Wav2Vec2Processor.from_pretrained(processor_dir)
