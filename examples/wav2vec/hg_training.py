@@ -257,11 +257,11 @@ def main():
 
     model = Wav2Vec2ForCTC.from_pretrained(
         model_str, 
-        attention_dropout=0.1,
-        hidden_dropout=0.1,
-        feat_proj_dropout=0.0,
-        mask_time_prob=0.05,
-        layerdrop=0.1,
+        # attention_dropout=0.1,
+        # hidden_dropout=0.1,
+        # feat_proj_dropout=0.0,
+        # mask_time_prob=0.05,
+        # layerdrop=0.1,
         gradient_checkpointing=True, 
         ctc_loss_reduction="mean", 
         pad_token_id=processor.tokenizer.pad_token_id,
@@ -299,8 +299,10 @@ def main():
     )
 
     if checkpoint :
+        print(">> Resume from checkpoint", checkpoint)
         trainer.train(resume_from_checkpoint=checkpoint)
     else :
+        print(">> Initiate fine-tuning")
         trainer.train()
 
 if __name__ == "__main__":
