@@ -20,25 +20,27 @@ from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC, \
     Wav2Vec2CTCTokenizer, Wav2Vec2FeatureExtractor, TrainingArguments, Trainer
 from datasets import load_dataset, Dataset, load_metric
 
-def format_csv_tracker(source, source_path, output):
+def format_csv_tracker(source, source_path, output, n):
     df = pd.read_csv(source)
     df["file"] = df["file"].apply(lambda x : os.path.join(source_path, x))
     df["text"] = df["transcription"]
     # df["text"] = df["transcription"].apply(lambda x : x.upper())
     df = df.drop("transcription", axis=1)
+    df = df.sample(n)
     df.to_csv(output, index=False)
 
 
 def import_data():
     
-    format_csv_tracker(TRAIN_CSV_RAW, TRAIN_PATH, TRAIN_CSV)
-    format_csv_tracker(VALID_CSV_RAW, VALID_PATH, VALID_CSV)
+    format_csv_tracker(TRAIN_CSV_RAW, TRAIN_PATH, TRAIN_CSV, 3300)
+    format_csv_tracker(VALID_CSV_RAW, VALID_PATH, VALID_CSV, 1600)
 
     data = load_dataset('csv', data_files={'train': TRAIN_CSV,'test': VALID_CSV})
+    print(data)
     return data
 
 def extract_all_chars(batch):
-    all_text = " ".join(batch["sentence"])
+    all_text = " ".join(batch["text"])
     vocab = list(set(all_text))
     return {"vocab": [vocab], "all_text": [all_text]}
 
@@ -244,11 +246,11 @@ def data_preparation_v2():
 
 def main():
 
-    # processor, dataset_prepared, data_collator = data_preparation()
-    processor, common_voice_train, common_voice_test, data_collator = data_preparation_v2()
+    processor, dataset_prepared, data_collator = data_preparation()
+    # processor, common_voice_train, common_voice_test, data_collator = data_preparation_v2()
 
 
-    model_str = "facebook/wav2vec2-base" if MODEL == "base" else "facebook/wav2vec2-base-10k-voxpopuli"
+    model_str = "facebook/wav2vec2-base" if MODEL == "base" else "facebook/wav2vec2-large-xlsr-53"
 
     print(">> Starting fine-tuning on model " + model_str )
     print(">> Training dataset :", LABEL)
@@ -292,35 +294,40 @@ def main():
     data_collator=data_collator,
     args=training_args,
     compute_metrics=compute_metrics,
-    train_dataset=common_voice_train,
-    eval_dataset=common_voice_test,
+    train_dataset=dataset_prepared['train'],
+    eval_dataset=dataset_prepared['test'],
     tokenizer=processor.feature_extractor,
     )
 
-    trainer.train()
+    if checkpoint :
+        trainer.train(resume_from_checkpoint=checkpoint)
+    else :
+        trainer.train()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    # parser.add_argument("--train", default=None, type=str,
-    #                     required=True, help="Train data tracker csv")
-    # parser.add_argument("--valid", default=None, type=str,
-    #                     required=True, help="Valid data tracker csv")
+    parser.add_argument("--train", default=None, type=str,
+                        required=True, help="Train data tracker csv")
+    parser.add_argument("--valid", default=None, type=str,
+                        required=True, help="Valid data tracker csv")
     parser.add_argument("--model", default=None, type=str,
                         required=True, help="Pretrained model (base / xlsr)")
+    parser.add_argument("--checkpoint", default=None, type=str,
+                        required=False, help="Pretrained model (base / xlsr)")
     args = parser.parse_args()
-
-    # TRAIN_CSV_RAW = args.train
-    # VALID_CSV_RAW = args.valid  
+    checkpoint = args.checkpoint
+    TRAIN_CSV_RAW = args.train
+    VALID_CSV_RAW = args.valid  
     MODEL = args.model #Facultatif : sert à ranger les modèles dans les bons dossiers
 
-    # TRAIN_PATH = TRAIN_CSV_RAW.split("dataset")[0]
-    # VALID_PATH = VALID_CSV_RAW.split("dataset")[0]
+    TRAIN_PATH = TRAIN_CSV_RAW.split("dataset")[0]
+    VALID_PATH = VALID_CSV_RAW.split("dataset")[0]
 
-    # TRAIN_CSV = os.path.join(TRAIN_PATH, "train_hg.csv")
-    # VALID_CSV = os.path.join(VALID_PATH, "valid_hg.csv")
+    TRAIN_CSV = os.path.join(TRAIN_PATH, "train_hg.csv")
+    VALID_CSV = os.path.join(VALID_PATH, "valid_hg.csv")
 
-    # LABEL = TRAIN_PATH.split('_')[-1][:-1]
-    LABEL = "commonvoice"
+    LABEL = TRAIN_PATH.split('_')[-1][:-1]
+    # LABEL = "commonvoice"
 
 ########
 ########
