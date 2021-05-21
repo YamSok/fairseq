@@ -27,7 +27,8 @@ def import_data(source, source_path, output):
 
 def map_to_result(batch):
     
-    if torch.cuda.is_available():
+    # if torch.cuda.is_available():
+    if False:
         model.to("cuda")
         input_values = processor(
             batch["speech"], 
@@ -75,12 +76,15 @@ def main(out):
     results = results["train"]
     wer_metric = load_metric("wer")
 
-    print("Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])))
+    print(f"Dataset : {TEST_CSV_RAW}" + 
+        f"\nInference time : {duration:.2f} \n" + 
+        "Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])))
     print("\n")
     show_random_elements(results, out, num_examples=10)
     wer_log = os.path.join(out, "wer.txt")
     with open(wer_log, "w") as err_file:
-        print(f"Dataset : {TEST_CSV_RAW}" + f"\nInference time : {duration:.2f} \n" + 
+        print(f"Dataset : {TEST_CSV_RAW}" + 
+        f"\nInference time : {duration:.2f} \n" + 
         "Test WER: {:.3f}".format(wer_metric.compute(predictions=results["pred_str"], references=results["text"])), file=err_file)
 
 
@@ -98,6 +102,8 @@ if __name__ == "__main__":
     processor_dir = args.processor
     model_dir = args.model
     out = args.out
+    
+    start = time.time()
 
     if not model_dir :
         print("benchmark modèle HG")
@@ -125,6 +131,5 @@ if __name__ == "__main__":
     TEST_PATH = TEST_CSV_RAW.split("dataset")[0]
     TEST_CSV = os.path.join(TEST_PATH, "test_hg.csv")
 
-    start = time.time()
     main(out)
     print(f"\n\nOverall time: {time.time() - start} s.")
