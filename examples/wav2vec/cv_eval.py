@@ -42,7 +42,7 @@ def show_random_elements(dataset, out, num_examples=10):
         
     df = pd.DataFrame(dataset[picks])[['target', 'predicted']]
     print(df)
-    example_log = os.path.join(out, "example.txt")
+    example_log = os.path.join(out, "example_cv.txt")
     with open(example_log, "w") as ex_log:
         print(df, file=ex_log)
 
@@ -64,7 +64,7 @@ def main():
         "Test WER: {:.3f}".format(wer_metric.compute(predictions=results["predicted"], references=results["target"])))
     print("\n")
     show_random_elements(results, out, num_examples=10)
-    wer_log = os.path.join(out, "wer.txt")
+    wer_log = os.path.join(out, "wer_cv.txt")
     with open(wer_log, "w") as err_file:
         print(f"Dataset : Common-voice FR train split" + 
         f"\nInference time : {duration:.2f} \n" + 
