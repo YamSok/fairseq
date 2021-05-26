@@ -88,9 +88,9 @@ out = args.out
 device = "cuda"
 chars_to_ignore_regex = '[\,\?\.\!\-\;\:\"]'  # noqa: W605
 resampler = torchaudio.transforms.Resample(orig_freq=48_000, new_freq=16_000)
-processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
-model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french").to(device)
-# processor = Wav2Vec2Processor.from_pretrained(processor_dir)
-# model = Wav2Vec2ForCTC.from_pretrained(model_dir).to("cuda")
+# processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
+# model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french").to(device)
+processor = Wav2Vec2Processor.from_pretrained(processor_dir)
+model = Wav2Vec2ForCTC.from_pretrained(model_dir).to("cuda")
 
 main()
