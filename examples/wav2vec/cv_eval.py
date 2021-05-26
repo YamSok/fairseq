@@ -47,7 +47,7 @@ def show_random_elements(dataset, out, num_examples=10):
         print(df, file=ex_log)
 
 def main():
-    ds = load_dataset("common_voice", "fr", split="test", data_dir="./cv-corpus-6.1-2020-12-11")
+    ds = load_dataset("common_voice", "fr", split="test[:40%]", data_dir="./cv-corpus-6.1-2020-12-11")
     ds = ds.map(map_to_array)
     start = time.time()
     result = ds.map(map_to_pred, batched=True, batch_size=16, remove_columns=list(ds.features.keys()))
