@@ -1,5 +1,6 @@
 import os
 os.chdir("/home/ubuntu/dl4s/libs/py-ctc-decode/")
+print(os.getcwd())
 import ctcdecode
 import torchaudio
 from datasets import load_dataset, load_metric
