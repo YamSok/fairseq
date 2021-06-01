@@ -96,10 +96,11 @@ def main():
 
 
 
-print("allo ?")
 # processor = Wav2Vec2Processor.from_pretrained(processor_dir)
 # model = Wav2Vec2ForCTC.from_pretrained(model_dir).to("cuda")
 if __name__ == "__main__":
+    print("allo ?")
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", default=None, type=str,
                         required=True, help="Output dir for wer_log.txt")
