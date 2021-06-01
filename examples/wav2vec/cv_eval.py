@@ -48,9 +48,10 @@ def map_to_pred(batch):
     pred_ids = torch.argmax(logits, dim=-1)
     batch["predicted"] = processor.batch_decode(pred_ids)
     batch["target"] = batch["sentence"]
-    print("> LM")
-    text = decoder.decode_batch(logits.cpu())
-    batch["corrected"] = text
+    batch["logit"] = logits
+    # print("> LM")
+    # text = decoder.decode_batch(logits.cpu())
+    # batch["corrected"] = text
     # batch["target"] = batch["text"]
     return batch
 
@@ -76,6 +77,8 @@ def main():
     ds = ds.map(map_to_array)
     start = time.time()
     result = ds.map(map_to_pred, batched=True, batch_size=16, remove_columns=list(ds.features.keys()))
+    df = result.to_pandas()
+    df.to_pickle("results.pkl")
     end  = time.time()
     duration = end - start
     # print(result)
@@ -83,19 +86,17 @@ def main():
     results = result
     wer_metric = load_metric("wer")
     wer = wer_metric.compute(predictions=results["predicted"], references=results["target"])
-    wer_corrected = wer_metric.compute(predictions=results["corrected"], references=results["target"])
+    # wer_corrected = wer_metric.compute(predictions=results["corrected"], references=results["target"])
     print(f"Dataset : Common-voice FR train split" + 
         f"\nInference time : {duration:.2f} \n" + 
-        "Test WER: {:.3f}".format(wer) +
-        "Test WER corrected: {:.3f}".format(wer_corrected))
+        "Test WER: {:.3f}".format(wer))
     print("\n")
     show_random_elements(results, out, num_examples=10)
     wer_log = os.path.join(out, "wer_cv.txt")
     with open(wer_log, "w") as err_file:
         print(f"Dataset : Common-voice FR train split" + 
         f"\nInference time : {duration:.2f} \n" + 
-        "Test WER: {:.3f}".format(wer), file=err_file +
-        "Test WER corrected: {:.3f}".format(wer_corrected))
+        "Test WER: {:.3f}".format(wer), file=err_file)
 
 
 
@@ -125,27 +126,27 @@ if __name__ == "__main__":
     resampler = torchaudio.transforms.Resample(orig_freq=48_000, new_freq=16_000)
     processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
     model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french").to(device)
-    tokenizer = Wav2Vec2CTCTokenizer.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
+    # tokenizer = Wav2Vec2CTCTokenizer.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
 
 
-    vocab_dict = tokenizer.get_vocab()
-    sort_vocab = sorted((value, key) for (key,value) in vocab_dict.items())
-    vocab = [x[1].replace("|", " ") if x[1] not in tokenizer.all_special_tokens else "_" for x in sort_vocab]
-    vocab = [x.lower() for x in vocab]
+    # vocab_dict = tokenizer.get_vocab()
+    # sort_vocab = sorted((value, key) for (key,value) in vocab_dict.items())
+    # vocab = [x[1].replace("|", " ") if x[1] not in tokenizer.all_special_tokens else "_" for x in sort_vocab]
+    # vocab = [x.lower() for x in vocab]
 
-    vocabulary = vocab
-    alpha = 2.5 # LM Weight
-    beta = 0.0 # LM Usage Reward
-    word_lm_scorer = ctcdecode.WordKenLMScorer(lm, alpha, beta) # use your own kenlm model
-    decoder = ctcdecode.BeamSearchDecoder(
-        vocabulary,
-        num_workers=2,
-        beam_width=128,
-        scorers=[word_lm_scorer],
-        cutoff_prob=np.log(0.000001),
-        cutoff_top_n=40
-    )
+    # vocabulary = vocab
+    # alpha = 2.5 # LM Weight
+    # beta = 0.0 # LM Usage Reward
+    # word_lm_scorer = ctcdecode.WordKenLMScorer(lm, alpha, beta) # use your own kenlm model
+    # decoder = ctcdecode.BeamSearchDecoder(
+    #     vocabulary,
+    #     num_workers=2,
+    #     beam_width=128,
+    #     scorers=[word_lm_scorer],
+    #     cutoff_prob=np.log(0.000001),
+    #     cutoff_top_n=40
+    # )
 
-    torch.multiprocessing.set_start_method('spawn')
+    # torch.multiprocessing.set_start_method('spawn')
 
     main()
