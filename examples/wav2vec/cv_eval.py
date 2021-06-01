@@ -73,7 +73,7 @@ def main():
     ds = load_dataset("common_voice", "fr", split="test[:1%]", data_dir="./cv-corpus-6.1-2020-12-11")
     # ds = load_dataset("patrickvonplaten/librispeech_asr_dummy", "clean", split="validation")
 
-    ds = ds.map(map_to_array, batched=True, batch_size=16)
+    ds = ds.map(map_to_array)
     start = time.time()
     result = ds.map(map_to_pred, batched=True, batch_size=16, remove_columns=list(ds.features.keys()))
     end  = time.time()
