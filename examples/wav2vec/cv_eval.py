@@ -14,21 +14,21 @@ import pandas as pd
 import os
 
 
-# def map_to_array(batch):
-#     speech, _ = torchaudio.load(batch["path"])
-#     batch["speech"] = resampler.forward(speech.squeeze(0)).numpy()
-#     batch["sampling_rate"] = resampler.new_freq
-#     batch["sentence"] = re.sub(chars_to_ignore_regex, '', batch["sentence"]).lower().replace("’", "'")
-#     return batch
-
 def map_to_array(batch):
-    speech, _ = torchaudio.load(batch["file"])
-    batch["speech"] = speech
+    speech, _ = torchaudio.load(batch["path"])
+    batch["speech"] = resampler.forward(speech.squeeze(0)).numpy()
+    batch["sampling_rate"] = resampler.new_freq
+    batch["sentence"] = re.sub(chars_to_ignore_regex, '', batch["sentence"]).lower().replace("’", "'")
     return batch
 
+# def map_to_array(batch):
+#     speech, _ = torchaudio.load(batch["file"])
+#     batch["speech"] = speech
+#     return batch
+
 def map_to_pred(batch):
-    # features = processor(batch["speech"][0], sampling_rate=batch["sampling_rate"][0], padding=True, return_tensors="pt")
-    features = processor(batch["speech"], sampling_rate=16_000, padding=True, return_tensors="pt")
+    features = processor(batch["speech"], sampling_rate=batch["sampling_rate"][0], padding=True, return_tensors="pt")
+    # features = processor(batch["speech"], sampling_rate=16_000, padding=True, return_tensors="pt")
 
     input_values = features.input_values.to(device)
 
@@ -38,8 +38,8 @@ def map_to_pred(batch):
 
     pred_ids = torch.argmax(logits, dim=-1)
     batch["predicted"] = processor.batch_decode(pred_ids)
-    # batch["target"] = batch["sentence"]
-    batch["target"] = batch["text"]
+    batch["target"] = batch["sentence"]
+    # batch["target"] = batch["text"]
 
 
     # add lm
@@ -61,8 +61,8 @@ def show_random_elements(dataset, out, num_examples=10):
         print(df, file=ex_log)
 
 def main():
-    # ds = load_dataset("common_voice", "fr", split="test[:40%]", data_dir="./cv-corpus-6.1-2020-12-11")
-    ds = load_dataset("patrickvonplaten/librispeech_asr_dummy", "clean", split="validation")
+    ds = load_dataset("common_voice", "fr", split="test[:1%]", data_dir="./cv-corpus-6.1-2020-12-11")
+    # ds = load_dataset("patrickvonplaten/librispeech_asr_dummy", "clean", split="validation")
 
     ds = ds.map(map_to_array)
     start = time.time()
