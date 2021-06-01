@@ -48,7 +48,7 @@ def map_to_pred(batch):
     pred_ids = torch.argmax(logits, dim=-1)
     batch["predicted"] = processor.batch_decode(pred_ids)
     batch["target"] = batch["sentence"]
-    batch["logit"] = logits.numpy()
+    batch["logit"] = logits.cpu().numpy()
     # print("> LM")
     # text = decoder.decode_batch(logits.cpu())
     # batch["corrected"] = text
