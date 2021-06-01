@@ -65,7 +65,7 @@ def show_random_elements(dataset, out, num_examples=10):
         print(df, file=ex_log)
 
 def main():
-    ds = load_dataset("common_voice", "fr", split="test[:3]", data_dir="./cv-corpus-6.1-2020-12-11")
+    ds = load_dataset("common_voice", "fr", split="test[:1%]", data_dir="./cv-corpus-6.1-2020-12-11")
     # ds = load_dataset("patrickvonplaten/librispeech_asr_dummy", "clean", split="validation")
 
     ds = ds.map(map_to_array)
