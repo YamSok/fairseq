@@ -72,7 +72,7 @@ def main():
     # print(result)
     # results = result["train"]
     results = result
-    wer_metric = load_metric("wer", num_process=4)
+    wer_metric = load_metric("wer")
     wer = wer_metric.compute(predictions=results["predicted"], references=results["target"])
     print(f"Dataset : Common-voice FR train split" + 
         f"\nInference time : {duration:.2f} \n" + 
