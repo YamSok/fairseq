@@ -1,3 +1,5 @@
+import os
+os.chdir("~/dl4s/libs/py-ctc-decode/")
 import ctcdecode
 import torchaudio
 from datasets import load_dataset, load_metric
@@ -13,7 +15,6 @@ import sys
 import argparse
 import random
 import pandas as pd
-import os
 import numpy as np
 
 
