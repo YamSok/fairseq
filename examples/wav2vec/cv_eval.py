@@ -40,14 +40,17 @@ def map_to_pred(batch):
     input_values = features.input_values.to(device)
 
     attention_mask = features.attention_mask.to(device)
+    print("> Model prediction")
+
     with torch.no_grad():
         logits = model(input_values, attention_mask=attention_mask).logits
 
     pred_ids = torch.argmax(logits, dim=-1)
     batch["predicted"] = processor.batch_decode(pred_ids)
     batch["target"] = batch["sentence"]
+    print("> LM")
     text = decoder.decode_batch(logits.cpu())
-    batch["text"] = text
+    batch["corrected"] = text
     # batch["target"] = batch["text"]
     return batch
 
@@ -67,10 +70,10 @@ def show_random_elements(dataset, out, num_examples=10):
         print(df, file=ex_log)
 
 def main():
-    ds = load_dataset("common_voice", "fr", split="test[:16]", data_dir="./cv-corpus-6.1-2020-12-11")
+    ds = load_dataset("common_voice", "fr", split="test[:1%]", data_dir="./cv-corpus-6.1-2020-12-11")
     # ds = load_dataset("patrickvonplaten/librispeech_asr_dummy", "clean", split="validation")
 
-    ds = ds.map(map_to_array)
+    ds = ds.map(map_to_array, batched=True, batch_size=16)
     start = time.time()
     result = ds.map(map_to_pred, batched=True, batch_size=16, remove_columns=list(ds.features.keys()))
     end  = time.time()
