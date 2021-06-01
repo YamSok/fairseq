@@ -20,6 +20,7 @@ import numpy as np
 
 
 def map_to_array(batch):
+    print("Prepare batch")
     speech, _ = torchaudio.load(batch["path"])
     batch["speech"] = resampler.forward(speech.squeeze(0)).numpy()
     batch["sampling_rate"] = resampler.new_freq
@@ -32,6 +33,7 @@ def map_to_array(batch):
 #     return batch
 
 def map_to_pred(batch):
+    print("Process batch")
     features = processor(batch["speech"], sampling_rate=batch["sampling_rate"][0], padding=True, return_tensors="pt")
     # features = processor(batch["speech"], sampling_rate=16_000, padding=True, return_tensors="pt")
 
@@ -44,7 +46,6 @@ def map_to_pred(batch):
     pred_ids = torch.argmax(logits, dim=-1)
     batch["predicted"] = processor.batch_decode(pred_ids)
     batch["target"] = batch["sentence"]
-    batch["logits"] = logits
     text = decoder.decode_batch(logits.cpu())
     batch["text"] = text
     # batch["target"] = batch["text"]
