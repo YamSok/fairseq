@@ -44,8 +44,9 @@ def map_to_pred(batch):
     pred_ids = torch.argmax(logits, dim=-1)
     batch["predicted"] = processor.batch_decode(pred_ids)
     batch["target"] = batch["sentence"]
+    batch["logits"] = logits
     text = decoder.decode_batch(logits.cpu())
-    batch["corrected"] = text
+    batch["text"] = text
     # batch["target"] = batch["text"]
     return batch
 
@@ -65,7 +66,7 @@ def show_random_elements(dataset, out, num_examples=10):
         print(df, file=ex_log)
 
 def main():
-    ds = load_dataset("common_voice", "fr", split="test[:1%]", data_dir="./cv-corpus-6.1-2020-12-11")
+    ds = load_dataset("common_voice", "fr", split="test[:16]", data_dir="./cv-corpus-6.1-2020-12-11")
     # ds = load_dataset("patrickvonplaten/librispeech_asr_dummy", "clean", split="validation")
 
     ds = ds.map(map_to_array)
@@ -93,50 +94,53 @@ def main():
         "Test WER corrected: {:.3f}".format(wer_corrected))
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--out", default=None, type=str,
-                    required=True, help="Output dir for wer_log.txt")
-parser.add_argument("--processor", default=None, type=str,
-                    required=False, help="Valid ata subset label")
-parser.add_argument("--model", default=None, type=str,
-                    required=False, help="Model folder")
-parser.add_argument("--lm", default=None, type=str,
-                    required=False, help="Path to kenlm lm")
-args = parser.parse_args()
-processor_dir = args.processor
-model_dir = args.model
-out = args.out
-lm = args.lm
 
-device = "cuda"
-chars_to_ignore_regex = '[\,\?\.\!\-\;\:\"]'  # noqa: W605
-resampler = torchaudio.transforms.Resample(orig_freq=48_000, new_freq=16_000)
-processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
-model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french").to(device)
-tokenizer = Wav2Vec2CTCTokenizer.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
-
-
-vocab_dict = tokenizer.get_vocab()
-sort_vocab = sorted((value, key) for (key,value) in vocab_dict.items())
-vocab = [x[1].replace("|", " ") if x[1] not in tokenizer.all_special_tokens else "_" for x in sort_vocab]
-vocab = [x.lower() for x in vocab]
-
-vocabulary = vocab
-alpha = 2.5 # LM Weight
-beta = 0.0 # LM Usage Reward
-word_lm_scorer = ctcdecode.WordKenLMScorer(lm, alpha, beta) # use your own kenlm model
-decoder = ctcdecode.BeamSearchDecoder(
-    vocabulary,
-    num_workers=2,
-    beam_width=128,
-    scorers=[word_lm_scorer],
-    cutoff_prob=np.log(0.000001),
-    cutoff_top_n=40
-)
 
 print("allo ?")
 # processor = Wav2Vec2Processor.from_pretrained(processor_dir)
 # model = Wav2Vec2ForCTC.from_pretrained(model_dir).to("cuda")
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", default=None, type=str,
+                        required=True, help="Output dir for wer_log.txt")
+    parser.add_argument("--processor", default=None, type=str,
+                        required=False, help="Valid ata subset label")
+    parser.add_argument("--model", default=None, type=str,
+                        required=False, help="Model folder")
+    parser.add_argument("--lm", default=None, type=str,
+                        required=False, help="Path to kenlm lm")
+    args = parser.parse_args()
+    processor_dir = args.processor
+    model_dir = args.model
+    out = args.out
+    lm = args.lm
+
+    device = "cuda"
+    chars_to_ignore_regex = '[\,\?\.\!\-\;\:\"]'  # noqa: W605
+    resampler = torchaudio.transforms.Resample(orig_freq=48_000, new_freq=16_000)
+    processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
+    model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-xlsr-53-french").to(device)
+    tokenizer = Wav2Vec2CTCTokenizer.from_pretrained("facebook/wav2vec2-large-xlsr-53-french")
+
+
+    vocab_dict = tokenizer.get_vocab()
+    sort_vocab = sorted((value, key) for (key,value) in vocab_dict.items())
+    vocab = [x[1].replace("|", " ") if x[1] not in tokenizer.all_special_tokens else "_" for x in sort_vocab]
+    vocab = [x.lower() for x in vocab]
+
+    vocabulary = vocab
+    alpha = 2.5 # LM Weight
+    beta = 0.0 # LM Usage Reward
+    word_lm_scorer = ctcdecode.WordKenLMScorer(lm, alpha, beta) # use your own kenlm model
+    decoder = ctcdecode.BeamSearchDecoder(
+        vocabulary,
+        num_workers=2,
+        beam_width=128,
+        scorers=[word_lm_scorer],
+        cutoff_prob=np.log(0.000001),
+        cutoff_top_n=40
+    )
+
     torch.multiprocessing.set_start_method('spawn')
+
     main()
