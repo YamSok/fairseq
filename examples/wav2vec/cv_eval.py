@@ -44,7 +44,7 @@ def map_to_pred(batch):
     pred_ids = torch.argmax(logits, dim=-1)
     batch["predicted"] = processor.batch_decode(pred_ids)
     batch["target"] = batch["sentence"]
-    text = decoder.decode_batch(logits)
+    text = decoder.decode_batch(logits.cpu())
     batch["corrected"] = text
     # batch["target"] = batch["text"]
     return batch
@@ -134,7 +134,7 @@ decoder = ctcdecode.BeamSearchDecoder(
     cutoff_top_n=40
 )
 
-
+print("allo ?")
 # processor = Wav2Vec2Processor.from_pretrained(processor_dir)
 # model = Wav2Vec2ForCTC.from_pretrained(model_dir).to("cuda")
 if __name__ == "__main__":
