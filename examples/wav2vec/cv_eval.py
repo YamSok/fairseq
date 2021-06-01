@@ -137,5 +137,5 @@ decoder = ctcdecode.BeamSearchDecoder(
 
 # processor = Wav2Vec2Processor.from_pretrained(processor_dir)
 # model = Wav2Vec2ForCTC.from_pretrained(model_dir).to("cuda")
-
+torch.multiprocessing.set_start_method('spawn')
 main()
